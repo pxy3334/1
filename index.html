@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>LinkPop Frenzy - iPhone Fixed</title>
+  <style>
+    :root{
+      --bg0:#070514;
+      --bg1:#190b36;
+      --bg2:#062c4d;
+      --text:#fff;
+      --muted:rgba(255,255,255,.66);
+      --cyan:#82f7ff;
+      --pink:#ff55d7;
+      --gold:#ffe867;
+      --green:#76ffb1;
+      --red:#ff5577;
+      --page-pad:clamp(8px, 3vw, 12px);
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html,body{
+      width:100%;
+      max-width:100%;
+      min-height:100%;
+      margin:0;
+      overflow:hidden;
+      overflow-x:hidden;
+      touch-action:manipulation;
+      overscroll-behavior:none;
+      user-select:none;
+      font-family:Inter, ui-rounded, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at 15% 8%, rgba(255,85,215,.34), transparent 28%),
+        radial-gradient(circle at 86% 10%, rgba(130,247,255,.30), transparent 30%),
+        linear-gradient(145deg, var(--bg0), var(--bg1) 52%, var(--bg2));
+    }
+
+    #fx{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      max-width:100vw;
+      pointer-events:none;
+      z-index:30;
+    }
+
+    #app{
+      position:relative;
+      z-index:2;
+      min-height:100svh;
+      width:100%;
+      max-width:100vw;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:9px;
+      padding:max(10px, env(safe-area-inset-top)) var(--page-pad) max(12px, env(safe-area-inset-bottom));
+    }
+
+    .top{
+      width:min(100%,620px);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      min-width:0;
+    }
+
+    .brand{ line-height:1; min-width:0; flex:1; }
+    .brand b{
+      display:block;
+      font-size:clamp(24px,7vw,40px);
+      letter-spacing:-1.3px;
+      text-transform:uppercase;
+      text-shadow:0 4px 16px rgba(0,0,0,.32);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .brand span{
+      display:block;
+      margin-top:4px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:1.4px;
+      text-transform:uppercase;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .pill,.stat,.btn,.modal,.board-wrap{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.105);
+      box-shadow:0 12px 26px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.18);
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:13px;
+      font-weight:950;
+      white-space:nowrap;
+    }
+
+    .stats{
+      width:min(100%,620px);
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:7px;
+      min-width:0;
+    }
+
+    .stat{
+      min-height:53px;
+      padding:8px 7px;
+      border-radius:16px;
+      overflow:hidden;
+      min-width:0;
+    }
+
+    .stat label{
+      display:block;
+      color:var(--muted);
+      font-size:9px;
+      font-weight:900;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .stat strong{
+      display:block;
+      margin-top:4px;
+      font-size:clamp(16px,4.8vw,25px);
+      line-height:1;
+      letter-spacing:-.5px;
+      font-variant-numeric:tabular-nums;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .bars{
+      width:min(100%,620px);
+      display:grid;
+      gap:6px;
+    }
+
+    .bar-shell{
+      height:13px;
+      width:100%;
+      border-radius:99px;
+      overflow:hidden;
+      background:rgba(0,0,0,.32);
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .bar-fill{
+      height:100%;
+      width:100%;
+      border-radius:99px;
+      background:linear-gradient(90deg, var(--green), var(--cyan), var(--pink));
+      transition:width .16s linear;
+    }
+
+    #juiceFill{ background:linear-gradient(90deg, var(--green), var(--gold), var(--pink)); }
+
+    .board-wrap{
+      position:relative;
+      width:min(100%,560px);
+      max-width:min(100%, calc(100svh - 223px));
+      min-width:0;
+      aspect-ratio:1/1;
+      margin-top:2px;
+      padding:8px;
+      border-radius:26px;
+      background:rgba(255,255,255,.105);
+      overflow:hidden;
+    }
+
+    .board{
+      width:100%;
+      height:100%;
+      display:grid;
+      grid-template-columns:repeat(8, minmax(0, 1fr));
+      grid-template-rows:repeat(8, minmax(0, 1fr));
+      gap:5px;
+    }
+
+    .tile{
+      position:relative;
+      border:0;
+      border-radius:15px;
+      min-width:0;
+      min-height:0;
+      padding:0;
+      overflow:hidden;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      font-size:clamp(21px,7vw,40px);
+      line-height:1;
+      color:white;
+      background:linear-gradient(145deg, rgba(255,255,255,.24), rgba(255,255,255,.075));
+      box-shadow:0 6px 0 rgba(0,0,0,.18), 0 10px 16px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.28);
+      transform:translateZ(0);
+      will-change:transform, opacity;
+      transition:transform .09s ease, filter .09s ease, opacity .12s ease;
+    }
+
+    .tile:active{ transform:translateY(3px) scale(.96); }
+
+    .tile.selected{
+      transform:translateY(-3px) scale(1.035);
+      filter:brightness(1.22) saturate(1.18);
+      box-shadow:0 0 0 3px rgba(255,255,255,.82), 0 0 18px rgba(130,247,255,.72), 0 11px 16px rgba(0,0,0,.24);
+      z-index:4;
+    }
+
+    .tile.empty{
+      pointer-events:none;
+      opacity:.10;
+      transform:scale(.86);
+      background:rgba(255,255,255,.04);
+      box-shadow:inset 0 2px 8px rgba(0,0,0,.23);
+    }
+
+    .tile.good{ animation:goodPop .20s ease-out forwards; }
+    @keyframes goodPop{
+      0%{ transform:scale(1.05); opacity:1; }
+      55%{ transform:scale(1.18); opacity:1; filter:brightness(1.45); }
+      100%{ transform:scale(.18); opacity:0; }
+    }
+
+    .tile.bad{ animation:badWiggle .18s ease-in-out; box-shadow:0 0 0 3px rgba(255,85,119,.75), 0 8px 14px rgba(0,0,0,.22); }
+    @keyframes badWiggle{
+      0%,100%{ transform:translateX(0); }
+      30%{ transform:translateX(-5px); }
+      70%{ transform:translateX(5px); }
+    }
+
+    .tile.hint{ animation:hintPulse .55s ease-in-out 2; }
+    @keyframes hintPulse{
+      0%,100%{ transform:scale(1); }
+      50%{ transform:scale(1.10) translateY(-3px); box-shadow:0 0 0 3px rgba(255,232,103,.78), 0 0 18px rgba(255,232,103,.7); }
+    }
+
+    .controls{
+      width:min(100%,620px);
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      min-width:0;
+    }
+
+    .btn{
+      min-height:46px;
+      border-radius:17px;
+      color:white;
+      font-weight:950;
+      font-size:14px;
+      cursor:pointer;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .btn:active{ transform:translateY(4px) scale(.98); }
+
+    .smallprint{
+      width:min(100%,620px);
+      margin:0;
+      text-align:center;
+      color:rgba(255,255,255,.58);
+      font-size:12px;
+      font-weight:650;
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      z-index:100;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:rgba(5,3,16,.78);
+      transition:opacity .16s ease, transform .16s ease;
+    }
+
+    .overlay.hidden{ opacity:0; pointer-events:none; transform:none; }
+
+    .modal{
+      width:min(92vw,420px);
+      padding:23px;
+      border-radius:30px;
+      text-align:center;
+      background:rgba(255,255,255,.13);
+    }
+
+    .modal h1{
+      margin:0;
+      font-size:clamp(36px,11vw,58px);
+      letter-spacing:-2px;
+      line-height:.9;
+      text-transform:uppercase;
+      text-shadow:0 4px 0 rgba(0,0,0,.18);
+    }
+
+    .modal p{
+      margin:14px 0 20px;
+      color:rgba(255,255,255,.75);
+      line-height:1.35;
+      font-weight:750;
+    }
+
+    .start{
+      width:100%;
+      min-height:62px;
+      border:0;
+      border-radius:22px;
+      background:linear-gradient(90deg, var(--green), var(--cyan), var(--pink));
+      color:#080516;
+      font-size:18px;
+      font-weight:1000;
+      cursor:pointer;
+      box-shadow:0 9px 0 rgba(0,0,0,.23);
+      text-transform:uppercase;
+    }
+
+    .start:active{ transform:translateY(6px); box-shadow:0 3px 0 rgba(0,0,0,.25); }
+
+    .float{
+      position:fixed;
+      z-index:80;
+      left:0;
+      top:0;
+      pointer-events:none;
+      font-weight:1000;
+      text-shadow:0 3px 0 rgba(0,0,0,.25);
+      transform:translate(-50%,-50%);
+      white-space:nowrap;
+      max-width:88vw;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      text-align:center;
+      animation:floatUp .62s ease-out forwards;
+    }
+
+    @keyframes floatUp{
+      0%{ opacity:0; transform:translate(-50%,0) scale(.72); }
+      20%{ opacity:1; transform:translate(-50%,-16px) scale(1.06); }
+      100%{ opacity:0; transform:translate(-50%,-62px) scale(1.12); }
+    }
+
+    .toast{
+      position:fixed;
+      z-index:81;
+      left:50%;
+      bottom:calc(80px + env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      max-width:92vw;
+      padding:9px 13px;
+      border-radius:999px;
+      background:rgba(8,5,22,.78);
+      border:1px solid rgba(255,255,255,.18);
+      color:white;
+      font-size:13px;
+      font-weight:900;
+      white-space:normal;
+      text-align:center;
+      overflow-wrap:anywhere;
+      animation:toast .85s ease forwards;
+    }
+
+    @keyframes toast{
+      0%{ opacity:0; transform:translateX(-50%) translateY(12px) scale(.94); }
+      20%,78%{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+      100%{ opacity:0; transform:translateX(-50%) translateY(-8px) scale(.97); }
+    }
+
+    .shake{ animation:shake .18s ease-in-out; }
+    @keyframes shake{
+      0%,100%{ transform:translate3d(0,0,0); }
+      30%{ transform:translate3d(-5px,2px,0); }
+      65%{ transform:translate3d(5px,-2px,0); }
+    }
+
+    .flash{
+      position:fixed;
+      inset:0;
+      z-index:60;
+      background:white;
+      opacity:0;
+      pointer-events:none;
+    }
+    .flash.go{ animation:flash .16s ease-out; }
+    @keyframes flash{ 0%{opacity:.25;} 100%{opacity:0;} }
+
+    @media (max-width:420px), (max-height:690px){
+      #app{ gap:7px; padding-top:8px; padding-left:var(--page-pad); padding-right:var(--page-pad); }
+      .brand span,.smallprint{ display:none; }
+      .stat{ min-height:46px; border-radius:14px; padding:7px 6px; }
+      .board-wrap{ padding:7px; border-radius:23px; width:min(100%, calc(100svh - 207px)); max-width:100%; min-width:0; }
+      .board{ gap:4px; }
+      .tile{ border-radius:13px; box-shadow:0 4px 0 rgba(0,0,0,.18), 0 7px 11px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.23); }
+      .btn{ min-height:42px; font-size:13px; border-radius:15px; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{ animation-duration:.001ms!important; animation-iteration-count:1!important; transition-duration:.001ms!important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fx"></canvas>
+
+  <main id="app">
+    <section class="top">
+      <div class="brand">
+        <b>LinkPop</b>
+        <span>连连看 but iPhone-safe</span>
+      </div>
+      <div class="pill" id="highPill">BEST 0</div>
+    </section>
+
+    <section class="stats">
+      <div class="stat"><label>Score</label><strong id="score">0</strong></div>
+      <div class="stat"><label>Combo</label><strong id="combo">x0</strong></div>
+      <div class="stat"><label>Level</label><strong id="level">1</strong></div>
+      <div class="stat"><label>Time</label><strong id="time">30</strong></div>
+    </section>
+
+    <section class="bars">
+      <div class="bar-shell"><div class="bar-fill" id="timeFill"></div></div>
+      <div class="bar-shell"><div class="bar-fill" id="juiceFill"></div></div>
+    </section>
+
+    <section class="board-wrap" id="boardWrap">
+      <div class="board" id="board"></div>
+    </section>
+
+    <section class="controls">
+      <button class="btn" id="hintBtn">💡 Hint</button>
+      <button class="btn" id="shuffleBtn">🌀 Shuffle</button>
+      <button class="btn" id="muteBtn">🔊 Audio</button>
+    </section>
+
+    <p class="smallprint">Same juicy game. Safari got put on a diet.</p>
+  </main>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h1 id="modalTitle">LinkPop Frenzy</h1>
+      <p id="modalText">30 seconds. Match pairs. Visible lines. Particles. Less iPhone suffering.</p>
+      <button class="start" id="startBtn">Tap to Start</button>
+    </div>
+  </div>
+
+  <div class="flash" id="flash"></div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const ROWS = 8;
+      const COLS = 8;
+      const START_TIME = 30;
+      const TYPES = ["🍓","🍋","🍇","🍉","🍒","🥝","🍑","🍍","🍬","🍭","🧁","🍪","🍩","⭐","💎","🔥","🌈","⚡","👑","🐸"];
+      const isMobile = matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+      const MAX_PARTICLES = isMobile ? 70 : 150;
+      const LINE_MS = isMobile ? 300 : 430;
+
+      const $ = id => document.getElementById(id);
+      const board = $("board");
+      const app = $("app");
+      const scoreEl = $("score");
+      const comboEl = $("combo");
+      const levelEl = $("level");
+      const timeEl = $("time");
+      const timeFill = $("timeFill");
+      const juiceFill = $("juiceFill");
+      const highPill = $("highPill");
+      const overlay = $("overlay");
+      const modalTitle = $("modalTitle");
+      const modalText = $("modalText");
+      const startBtn = $("startBtn");
+      const hintBtn = $("hintBtn");
+      const shuffleBtn = $("shuffleBtn");
+      const muteBtn = $("muteBtn");
+      const flash = $("flash");
+      const fx = $("fx");
+      const ctx = fx.getContext("2d", { alpha:true });
+
+      const state = {
+        cells: [],
+        selected: null,
+        score: 0,
+        combo: 0,
+        level: 1,
+        time: START_TIME,
+        maxTime: START_TIME,
+        juice: 0,
+        running: false,
+        busy: false,
+        muted: false,
+        high: safeGetHigh(),
+        lastMatch: 0,
+        timer: null
+      };
+
+      let buttons = [];
+      let particles = [];
+      let lines = [];
+      let fxRunning = false;
+      let lastFx = performance.now();
+      let audioCtx = null;
+      let master = null;
+
+      function safeGetHigh(){
+        try { return Number(localStorage.getItem("linkpop_fixed_high") || 0); }
+        catch (_) { return 0; }
+      }
+
+      function safeSetHigh(value){
+        try { localStorage.setItem("linkpop_fixed_high", String(value)); }
+        catch (_) {}
+      }
+
+      function shuffle(arr){
+        for(let i=arr.length-1;i>0;i--){
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+      }
+
+      function rcToIndex(r,c){ return r * COLS + c; }
+      function indexToRC(i){ return { r: Math.floor(i / COLS), c: i % COLS }; }
+
+      function createTiles(){
+        board.textContent = "";
+        buttons = [];
+        for(let i=0;i<ROWS*COLS;i++){
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "tile empty";
+          btn.dataset.index = String(i);
+          btn.addEventListener("pointerdown", e => {
+            e.preventDefault();
+            handleTile(i);
+          }, { passive:false });
+          board.appendChild(btn);
+          buttons.push(btn);
+        }
+      }
+
+      function syncTile(i){
+        const btn = buttons[i];
+        const value = state.cells[i];
+        btn.textContent = value || "";
+        btn.className = "tile" + (value ? "" : " empty") + (state.selected === i ? " selected" : "");
+      }
+
+      function syncAllTiles(){
+        for(let i=0;i<buttons.length;i++) syncTile(i);
+      }
+
+      function makeBoard(){
+        const total = ROWS * COLS;
+        const pairs = total / 2;
+        const values = [];
+        for(let i=0;i<pairs;i++){
+          const v = TYPES[(i + state.level) % TYPES.length];
+          values.push(v, v);
+        }
+        state.cells = shuffle(values);
+        let safety = 0;
+        while(!findAvailableMove() && safety < 80){
+          state.cells = shuffle(state.cells);
+          safety++;
+        }
+        state.selected = null;
+        syncAllTiles();
+      }
+
+      function updateHud(){
+        scoreEl.textContent = Math.floor(state.score).toLocaleString();
+        comboEl.textContent = "x" + state.combo;
+        levelEl.textContent = state.level;
+        timeEl.textContent = Math.max(0, Math.ceil(state.time));
+        highPill.textContent = "BEST " + state.high.toLocaleString();
+        timeFill.style.width = Math.max(0, Math.min(100, (state.time / state.maxTime) * 100)) + "%";
+        juiceFill.style.width = Math.max(0, Math.min(100, state.juice)) + "%";
+        timeEl.style.color = state.time <= 5 ? "var(--red)" : "white";
+      }
+
+      function startGame(){
+        initAudio();
+        state.score = 0;
+        state.combo = 0;
+        state.level = 1;
+        state.time = START_TIME;
+        state.maxTime = START_TIME;
+        state.juice = 0;
+        state.running = true;
+        state.busy = false;
+        overlay.classList.add("hidden");
+        makeBoard();
+        updateHud();
+        toast("GO. CONNECT. PANIC.");
+        sfx("start");
+
+        clearInterval(state.timer);
+        state.timer = setInterval(() => {
+          if(!state.running) return;
+          state.time -= 1;
+          if(state.time <= 5 && state.time > 0) sfx("tick");
+          if(state.time <= 0){
+            state.time = 0;
+            updateHud();
+            gameOver();
+          }else{
+            updateHud();
+          }
+        }, 1000);
+      }
+
+      function gameOver(){
+        state.running = false;
+        state.busy = false;
+        clearInterval(state.timer);
+        sfx("gameover");
+        shake();
+        flashScreen();
+
+        if(state.score > state.high){
+          state.high = Math.floor(state.score);
+          safeSetHigh(state.high);
+          modalTitle.textContent = "New Best 💅";
+        }else{
+          modalTitle.textContent = "Time Up";
+        }
+        modalText.textContent = `Score ${Math.floor(state.score).toLocaleString()} · Level ${state.level}. iPhone survived, barely.`;
+        startBtn.textContent = "Run It Back";
+        setTimeout(() => overlay.classList.remove("hidden"), 260);
+      }
+
+      function handleTile(i){
+        if(!state.running || state.busy) return;
+        if(!state.cells[i]) return;
+        initAudio();
+
+        if(state.selected === null){
+          state.selected = i;
+          syncTile(i);
+          sfx("tap");
+          return;
+        }
+
+        if(state.selected === i){
+          const old = state.selected;
+          state.selected = null;
+          syncTile(old);
+          sfx("tap");
+          return;
+        }
+
+        const a = state.selected;
+        const b = i;
+        if(state.cells[a] === state.cells[b]){
+          const path = findPath(indexToRC(a), indexToRC(b));
+          if(path){
+            matchTiles(a,b,path);
+            return;
+          }
+        }
+        wrongTiles(a,b);
+      }
+
+      function matchTiles(a,b,path){
+        state.busy = true;
+        const now = performance.now();
+        state.combo = now - state.lastMatch < 1800 ? state.combo + 1 : 1;
+        state.lastMatch = now;
+
+        const gained = 100 + state.combo * 32 + state.level * 12;
+        state.score += gained;
+        state.juice = Math.min(100, state.juice + 8 + Math.min(14, state.combo * 2));
+        if(state.combo >= 4) state.time = Math.min(state.maxTime, state.time + 1);
+        if(state.juice >= 100){
+          state.score += 350;
+          state.juice = 0;
+          toast("JUICE BONUS +350. Safari can't stop us.");
+          flashScreen();
+        }
+
+        state.selected = null;
+        syncTile(a);
+        syncTile(b);
+        mark(a,"good",230);
+        mark(b,"good",230);
+        showLine(path);
+
+        const ca = tileCenter(a);
+        const cb = tileCenter(b);
+        burst(ca.x, ca.y, isMobile ? 9 : 16);
+        burst(cb.x, cb.y, isMobile ? 9 : 16);
+        floatText("+" + gained, (ca.x + cb.x)/2, (ca.y + cb.y)/2, state.combo);
+        if(state.combo >= 3) floatText("x" + state.combo, cb.x, cb.y - 4, state.combo + 2);
+
+        sfx(state.combo >= 5 ? "combo2" : state.combo >= 3 ? "combo" : "match");
+        if(state.combo >= 5) shake();
+        updateHud();
+
+        setTimeout(() => {
+          state.cells[a] = null;
+          state.cells[b] = null;
+          syncTile(a);
+          syncTile(b);
+          state.busy = false;
+
+          if(state.cells.every(v => v === null)) levelClear();
+          else ensureMove();
+        }, 190);
+      }
+
+      function wrongTiles(a,b){
+        state.combo = 0;
+        state.juice = Math.max(0, state.juice - 7);
+        state.selected = null;
+        syncTile(a);
+        syncTile(b);
+        mark(a,"bad",210);
+        mark(b,"bad",210);
+        sfx("bad");
+        shake();
+        updateHud();
+      }
+
+      function levelClear(){
+        state.level += 1;
+        state.maxTime = Math.min(44, START_TIME + state.level * 2);
+        state.time = Math.min(state.maxTime, state.time + 7);
+        state.score += 500 + state.level * 80;
+        toast("LEVEL CLEAR. Board got cooked.");
+        sfx("clear");
+        confetti();
+        setTimeout(() => {
+          makeBoard();
+          updateHud();
+        }, 300);
+      }
+
+      function ensureMove(){
+        if(findAvailableMove()) return;
+        shuffleRemaining(false);
+        toast("NO MOVES — AUTO SHUFFLE");
+      }
+
+      function shuffleRemaining(manual){
+        if(!state.running || state.busy) return;
+        const idx = [];
+        const vals = [];
+        state.cells.forEach((v,i) => {
+          if(v){ idx.push(i); vals.push(v); }
+        });
+        let tries = 0;
+        do{
+          shuffle(vals);
+          idx.forEach((cellIndex,n) => state.cells[cellIndex] = vals[n]);
+          tries++;
+        }while(!findAvailableMove() && tries < 140);
+        state.selected = null;
+        syncAllTiles();
+
+        if(manual){
+          state.combo = 0;
+          state.juice = Math.max(0, state.juice - 10);
+          toast("SHUFFLED. RNG gremlin hired.");
+          sfx("shuffle");
+          updateHud();
+        }
+      }
+
+      function showHint(){
+        if(!state.running || state.busy) return;
+        const move = findAvailableMove();
+        if(!move){ ensureMove(); return; }
+        const old = state.selected;
+        state.selected = null;
+        if(old !== null) syncTile(old);
+        mark(move.a,"hint",1100);
+        mark(move.b,"hint",1100);
+        showLine(move.path, true);
+        state.combo = 0;
+        state.juice = Math.max(0, state.juice - 5);
+        sfx("hint");
+        toast("Hint used. No shame. Mostly.");
+        updateHud();
+      }
+
+      function mark(i, cls, ms){
+        const btn = buttons[i];
+        if(!btn) return;
+        btn.classList.remove(cls);
+        void btn.offsetWidth;
+        btn.classList.add(cls);
+        setTimeout(() => btn.classList.remove(cls), ms);
+      }
+
+      function findPath(a,b){
+        const gridRows = ROWS + 2;
+        const gridCols = COLS + 2;
+        const start = { r:a.r + 1, c:a.c + 1 };
+        const target = { r:b.r + 1, c:b.c + 1 };
+        const dirs = [[-1,0],[0,1],[1,0],[0,-1]];
+        const visited = Array.from({length:gridRows}, () => Array.from({length:gridCols}, () => [99,99,99,99]));
+
+        function blocked(r,c){
+          if(r === start.r && c === start.c) return false;
+          if(r === target.r && c === target.c) return false;
+          const br = r - 1;
+          const bc = c - 1;
+          if(br < 0 || br >= ROWS || bc < 0 || bc >= COLS) return false;
+          return state.cells[rcToIndex(br,bc)] !== null;
+        }
+
+        const q = [{ r:start.r, c:start.c, dir:-1, turns:-1, path:[[start.r,start.c]] }];
+        let head = 0;
+        while(head < q.length){
+          const cur = q[head++];
+          for(let d=0;d<4;d++){
+            const nr = cur.r + dirs[d][0];
+            const nc = cur.c + dirs[d][1];
+            if(nr < 0 || nr >= gridRows || nc < 0 || nc >= gridCols) continue;
+            const turns = cur.dir === -1 ? 0 : (cur.dir === d ? cur.turns : cur.turns + 1);
+            if(turns > 2 || blocked(nr,nc) || visited[nr][nc][d] <= turns) continue;
+            visited[nr][nc][d] = turns;
+            const path = cur.path.concat([[nr,nc]]);
+            if(nr === target.r && nc === target.c) return simplifyPath(path);
+            q.push({ r:nr, c:nc, dir:d, turns, path });
+          }
+        }
+        return null;
+      }
+
+      function simplifyPath(path){
+        if(path.length <= 2) return path;
+        const out = [path[0]];
+        let prev = dir(path[0], path[1]);
+        for(let i=1;i<path.length-1;i++){
+          const next = dir(path[i], path[i+1]);
+          if(next !== prev){
+            out.push(path[i]);
+            prev = next;
+          }
+        }
+        out.push(path[path.length-1]);
+        return out;
+      }
+
+      function dir(a,b){ return a[0] === b[0] ? "h" : "v"; }
+
+      function findAvailableMove(){
+        for(let i=0;i<state.cells.length;i++){
+          if(!state.cells[i]) continue;
+          for(let j=i+1;j<state.cells.length;j++){
+            if(state.cells[i] !== state.cells[j]) continue;
+            const path = findPath(indexToRC(i), indexToRC(j));
+            if(path) return { a:i, b:j, path };
+          }
+        }
+        return null;
+      }
+
+      function resizeCanvas(){
+        const dpr = isMobile ? 1 : Math.min(2, window.devicePixelRatio || 1);
+        fx.width = Math.floor(window.innerWidth * dpr);
+        fx.height = Math.floor(window.innerHeight * dpr);
+        fx.style.width = window.innerWidth + "px";
+        fx.style.height = window.innerHeight + "px";
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+      }
+
+      function tileCenter(i){
+        const r = buttons[i].getBoundingClientRect();
+        return { x:r.left + r.width/2, y:r.top + r.height/2 };
+      }
+
+      function pathPointToScreen(p){
+        const rect = board.getBoundingClientRect();
+        const cellW = rect.width / COLS;
+        const cellH = rect.height / ROWS;
+        return {
+          x: rect.left + (p[1] - 1 + .5) * cellW,
+          y: rect.top + (p[0] - 1 + .5) * cellH
+        };
+      }
+
+      function showLine(path, hint){
+        lines.push({
+          pts:path.map(pathPointToScreen),
+          born:performance.now(),
+          ms:hint ? 720 : LINE_MS,
+          hint:!!hint
+        });
+        kickFx();
+      }
+
+      function burst(x,y,count){
+        const colors = ["#82f7ff", "#ff55d7", "#ffe867", "#76ffb1", "#ffffff"];
+        for(let i=0;i<count;i++){
+          if(particles.length >= MAX_PARTICLES) particles.shift();
+          const a = Math.random() * Math.PI * 2;
+          const sp = isMobile ? 90 + Math.random()*130 : 120 + Math.random()*220;
+          particles.push({
+            x,y,
+            vx:Math.cos(a)*sp,
+            vy:Math.sin(a)*sp - 60,
+            life:.34 + Math.random()*.28,
+            age:0,
+            size:isMobile ? 3 + Math.random()*4 : 4 + Math.random()*6,
+            color:colors[(Math.random()*colors.length)|0]
+          });
+        }
+        kickFx();
+      }
+
+      function confetti(){
+        const rect = board.getBoundingClientRect();
+        const count = isMobile ? 42 : 90;
+        for(let i=0;i<count;i++){
+          burst(rect.left + Math.random()*rect.width, rect.top + Math.random()*rect.height, 1);
+        }
+        flashScreen();
+        kickFx();
+      }
+
+      function kickFx(){
+        if(fxRunning) return;
+        fxRunning = true;
+        lastFx = performance.now();
+        requestAnimationFrame(fxLoop);
+      }
+
+      function fxLoop(now){
+        const dt = Math.min(.033, (now - lastFx) / 1000);
+        lastFx = now;
+        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+
+        lines = lines.filter(line => now - line.born < line.ms);
+        for(const line of lines){
+          const t = Math.min(1, (now - line.born) / line.ms);
+          const alpha = Math.sin(Math.PI * t);
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.lineWidth = line.hint ? 5 : 7;
+          ctx.lineCap = "round";
+          ctx.lineJoin = "round";
+          ctx.strokeStyle = line.hint ? "#ffe867" : "#82f7ff";
+          ctx.shadowBlur = isMobile ? 6 : 14;
+          ctx.shadowColor = ctx.strokeStyle;
+          ctx.beginPath();
+          line.pts.forEach((p,i) => i ? ctx.lineTo(p.x,p.y) : ctx.moveTo(p.x,p.y));
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        particles = particles.filter(p => p.age < p.life);
+        for(const p of particles){
+          p.age += dt;
+          p.vy += 360 * dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          const alpha = Math.max(0, 1 - p.age / p.life);
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        if(lines.length || particles.length){
+          requestAnimationFrame(fxLoop);
+        }else{
+          ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+          fxRunning = false;
+        }
+      }
+
+      function floatText(text,x,y,combo){
+        const el = document.createElement("div");
+        el.className = "float";
+        el.textContent = text;
+        const safeX = Math.max(42, Math.min(window.innerWidth - 42, x));
+        const safeY = Math.max(32, Math.min(window.innerHeight - 32, y));
+        el.style.left = safeX + "px";
+        el.style.top = safeY + "px";
+        el.style.fontSize = Math.min(30, 17 + combo*1.8) + "px";
+        el.style.color = combo >= 5 ? "var(--pink)" : combo >= 3 ? "var(--gold)" : "#fff";
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 700);
+      }
+
+      function toast(msg){
+        const old = document.querySelector(".toast");
+        if(old) old.remove();
+        const el = document.createElement("div");
+        el.className = "toast";
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 900);
+      }
+
+      function shake(){
+        app.classList.remove("shake");
+        void app.offsetWidth;
+        app.classList.add("shake");
+        setTimeout(() => app.classList.remove("shake"), 210);
+      }
+
+      function flashScreen(){
+        flash.classList.remove("go");
+        void flash.offsetWidth;
+        flash.classList.add("go");
+      }
+
+      function initAudio(){
+        if(state.muted) return;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if(!AC) return;
+        if(!audioCtx){
+          audioCtx = new AC();
+          master = audioCtx.createGain();
+          master.gain.value = .14;
+          master.connect(audioCtx.destination);
+        }
+        if(audioCtx.state === "suspended") audioCtx.resume();
+      }
+
+      function beep(freq,dur,type,gain,delay=0){
+        if(state.muted || !audioCtx || !master) return;
+        const t = audioCtx.currentTime + delay;
+        const osc = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq,t);
+        g.gain.setValueAtTime(.0001,t);
+        g.gain.exponentialRampToValueAtTime(gain,t+.01);
+        g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+        osc.connect(g);
+        g.connect(master);
+        osc.start(t);
+        osc.stop(t+dur+.02);
+      }
+
+      function sfx(name){
+        switch(name){
+          case "tap": beep(520,.045,"triangle",.035); break;
+          case "match": beep(640,.06,"sine",.055); beep(920,.07,"triangle",.035,.035); break;
+          case "combo": beep(700,.055,"triangle",.06); beep(1050,.07,"triangle",.045,.04); beep(1350,.08,"sine",.035,.08); break;
+          case "combo2": beep(520,.055,"triangle",.055); beep(880,.07,"triangle",.06,.035); beep(1320,.08,"sine",.05,.07); beep(1760,.09,"triangle",.04,.105); break;
+          case "bad": beep(170,.11,"sawtooth",.035); beep(115,.12,"sawtooth",.025,.04); break;
+          case "shuffle": for(let i=0;i<5;i++) beep(260+i*80,.035,"triangle",.03,i*.025); break;
+          case "hint": beep(760,.055,"sine",.035); beep(1120,.07,"sine",.028,.045); break;
+          case "clear": for(let i=0;i<7;i++) beep(500+i*90,.055,"triangle",.04,i*.035); break;
+          case "start": beep(330,.07,"triangle",.045); beep(660,.08,"triangle",.04,.06); beep(990,.09,"sine",.035,.12); break;
+          case "tick": beep(900,.035,"square",.018); break;
+          case "gameover": beep(300,.13,"sawtooth",.035); beep(190,.16,"sawtooth",.025,.12); break;
+        }
+      }
+
+      startBtn.addEventListener("click", startGame);
+      hintBtn.addEventListener("click", showHint);
+      shuffleBtn.addEventListener("click", () => shuffleRemaining(true));
+      muteBtn.addEventListener("click", () => {
+        state.muted = !state.muted;
+        muteBtn.textContent = state.muted ? "🔇 Muted" : "🔊 Audio";
+        if(!state.muted){ initAudio(); sfx("tap"); }
+      });
+
+      document.addEventListener("visibilitychange", () => {
+        if(!audioCtx) return;
+        if(document.hidden) audioCtx.suspend();
+        else if(!state.muted) audioCtx.resume();
+      });
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas();
+      createTiles();
+      updateHud();
+    })();
+  </script>
+</body>
+</html>
